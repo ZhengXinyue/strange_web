@@ -1,7 +1,7 @@
 import functools
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
-from flaskr.db import get_db
+from strange_web.flaskr.db import get_db
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -62,6 +62,7 @@ def login():
     return render_template('auth/login.html')
 
 
+# 每次请求之前都查看session中是否有用户
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
@@ -80,6 +81,7 @@ def logout():
     return redirect(url_for('blog.index'))
 
 
+# load_logged_in_user函数是否生成了g.user
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
